@@ -1,2 +1,4 @@
 rico_crawler_env/
 config.json
+.vscode/
+__pycache__/

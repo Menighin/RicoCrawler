@@ -1,8 +1,13 @@
 import time
 import json
+import parsers as parser
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 RICO_LOGIN_URL = 'https://www.rico.com.vc/login?url=/dashboard/'
+MAX_WAIT_TIME = 60
 
 def get_actives_data(props: dict):
 
@@ -16,15 +21,12 @@ def get_actives_data(props: dict):
 
     driver = webdriver.Chrome(webdriverPath) if webdriverPath is not None else webdriver.Chrome()
     driver.get(RICO_LOGIN_URL)
-
-    time.sleep(5) # Wait for page to load
+    driver.implicitly_wait(MAX_WAIT_TIME) # Wait for element to appear in each call
 
     form_user =  driver.find_element_by_name('loginController.usernameForm')
     input_username = form_user.find_element_by_xpath(".//input[@placeholder='Usuário']")
     input_username.send_keys(username)
     form_user.submit()
-
-    time.sleep(1) # Wait for page to change
 
     form_password = driver.find_element_by_name('loginController.passwordForm')
     buttons = form_password.find_elements_by_tag_name('button')
@@ -36,7 +38,13 @@ def get_actives_data(props: dict):
 
     form_password.submit()
 
-    time.sleep(15) # wait for home page to load
+    # Crawling the home page
+    json = {}
+    home_by_type = driver.find_element_by_css_selector('#home-step-menu-resumo-investimentos table')
+    home_treasury = driver.find_element_by_css_selector("div[summary-position-product=treasury]")
+
+    json['home_by_type'] = parser.parse_home_by_type(home_by_type.get_attribute('innerHTML'))
+
 
     driver.quit()
 
