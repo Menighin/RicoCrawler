@@ -40,11 +40,19 @@ def get_actives_data(props: dict):
 
     # Crawling the home page
     json = {}
-    home_by_type = driver.find_element_by_css_selector('#home-step-menu-resumo-investimentos table')
-    home_treasury = driver.find_element_by_css_selector("div[summary-position-product=treasury]")
+    summary = driver.find_element_by_css_selector('#home-step-menu-resumo-investimentos table')
+    home_treasury = driver.find_element_by_css_selector("div[summary-position-product='treasury'] #tableAllocatedValue")
+    fixed_income = driver.find_element_by_css_selector("div[summary-position-product='fixed-income'] #tableAllocatedValue")
+    funds = driver.find_element_by_css_selector("div[summary-position-product='funds'] #tableAllocatedValue")
 
-    json['home_by_type'] = parser.parse_home_by_type(home_by_type.get_attribute('innerHTML'))
-
+    json['summary'] = parser.parse_home_table(summary.get_attribute('innerHTML'), parser.HomeTableType.ZERO_TWO_THREE)
+    print('---------------------------------------')
+    json['home_treasury'] = parser.parse_home_table(home_treasury.get_attribute('innerHTML'), parser.HomeTableType.ZERO_ONE_TWO)
+    print('---------------------------------------')
+    json['fixed_income'] = parser.parse_home_table(fixed_income.get_attribute('innerHTML'), parser.HomeTableType.ZERO_THREE)
+    print('---------------------------------------')
+    json['funds'] = parser.parse_home_table(funds.get_attribute('innerHTML'), parser.HomeTableType.ZERO_ONE_TWO)
+    
 
     driver.quit()
 
