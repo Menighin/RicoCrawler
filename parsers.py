@@ -9,13 +9,12 @@ class HomeTableType(Enum):
     ZERO_ONE_TWO = 2
     ZERO_THREE = 3
 
-
 def brl_to_decimal(value: str) -> Decimal:
     return Decimal(value.replace('.', '').replace(',', '.')[3:])
 
 def parse_home_table(html: str, tableType: HomeTableType) -> dict:
     dom = Soup(html, 'html.parser').find('tbody')
-    json = {}
+    json = []
     for tr in dom.find_all('tr')[1:]:
         tds = tr.find_all('td')
         applied = '-'
@@ -30,9 +29,9 @@ def parse_home_table(html: str, tableType: HomeTableType) -> dict:
             continue
         
         if tableType != HomeTableType.ZERO_THREE:
-            json[name] = { 'applied': brl_to_decimal(applied), 'actual': brl_to_decimal(actual) }
+            json.append({ 'name': name, 'applied': brl_to_decimal(applied), 'actual': brl_to_decimal(actual) })
         else:
-            json[name] = { 'actual': brl_to_decimal(actual) }
+            json.append({ 'name': name, 'actual': brl_to_decimal(actual) })
     
     print(json)
     return json
