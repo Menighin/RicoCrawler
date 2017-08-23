@@ -68,12 +68,7 @@ def parse_fixed_income(html: str):
     dom = Soup(html, 'html.parser')
     json = []
 
-    print(html)
-
     for tr in dom.find_all('tr')[1:]:
-
-        print('----------------')
-        print(tr)
 
         tds = tr.find_all('td')
 

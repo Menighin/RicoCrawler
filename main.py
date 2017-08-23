@@ -80,11 +80,9 @@ def get_actives_data(props: dict):
 
 
     # Crawling Fixed Income
-    driver.get(RICO_TREASURY_PAGE)
+    driver.get(RICO_FIXED_INCOME_PAGE)
 
     json['fixedIncome'] = parser.parse_fixed_income(driver.find_element_by_css_selector('#tableAllocatedValue tbody').get_attribute('innerHTML'))
-
-    print(json['fixedIncome'])
 
     driver.quit()
 
