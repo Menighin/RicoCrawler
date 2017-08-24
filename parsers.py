@@ -10,7 +10,8 @@ class HomeTableType(Enum):
     ZERO_THREE = 3
 
 def brl_to_decimal(value: str) -> Decimal:
-    return Decimal(value.replace('.', '').replace(',', '.')[3:])
+    return value.replace('.', '').replace(',', '.')[3:]
+    # return Decimal(value.replace('.', '').replace(',', '.')[3:])
 
 def parse_home_table(html: str, tableType: HomeTableType) -> dict:
     dom = Soup(html, 'html.parser').find('tbody')
