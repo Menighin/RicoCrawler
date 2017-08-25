@@ -133,7 +133,7 @@ def write_file(f_json, res, file, now_str):
 
     recursive_update_obj(f_json, res, now_str)
 
-    file.write(json.dumps(f_json))
+    file.write('var DATA=' + json.dumps(f_json))
     # recursive_append_date(res, now_str)
 
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     NOW_STR = '{}-{:02}-{:02}'.format(NOW.year, NOW.month, NOW.day)
 
     with open('html/data.js', 'r') as f:
-        fStr = f.read().replace('var data=', '')
+        fStr = f.read().replace('var DATA=', '')
         fJson = json.loads(fStr) if len(fStr) > 0 else {'lastRun': ''}
 
     if NOW_STR == fJson['lastRun']:

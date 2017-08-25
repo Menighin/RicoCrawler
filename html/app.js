@@ -1,5 +1,14 @@
-function renderChart(chartId, dataKey, period) {
+function renderChart(btn, chartId, dataKey, period) {
     
+    // Disable buttons to enable the clicked one
+    if (btn != null) {
+        $('#' + chartId + '-container .chart-filter .btn').each(function() {
+            $(this).removeClass('active');
+        });
+
+        $(btn).addClass('active');
+    }
+
     let data = DATA;
 
     dataKey.split('.').forEach(function(k) {
@@ -37,35 +46,64 @@ function renderChart(chartId, dataKey, period) {
         
         let d = data[i];
 
-        let daysToPlot = null;
-        if (period === 'weekly') daysToPlot = 7;
-        else if (period === 'biweekly') daysToPlot = 15;
+        let pointsToPlot = null;
+        if (period === 'weekly' || period === 'biweekly' || period === 'monthly') pointsToPlot = 12;
+        else if (period === 'daily') pointsToPlot = 14;
 
-        if (period !== 'monthly') {
+        if (period === 'daily') {
             CONFIG.PROPS.forEach((p) => {
                 if (d.hasOwnProperty(p.key)) {
                     let actualData = []; 
-                    for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < daysToPlot; j--, k++) {
+                    for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < pointsToPlot; j--, k++) {
                         actualData.push([ new Date(d.date[j]).getTime(), parseFloat(d[p.key][j]) ]);
                     }
                     series.push({name: d.name + ' ' + p.label, data: actualData});
                 }
             });
-        } else { // Get one date by month
-            let date = new Date(d.date[d.date.length - 1])
-            let month = date.getFullYear() + date.getMonth() + 1;
-
+        } else if (period == 'monthly') { // Get one date by month
+           
             CONFIG.PROPS.forEach((p) => {
+
+                let date = new Date(d.date[d.date.length - 1])
+                let month = date.getFullYear() + date.getMonth() + 1;
+
                 if (d.hasOwnProperty(p.key)) {
 
                     let actualData = []; 
 
-                    for (let j = d[p.key].length - 1; j >= 0; j--) {
+                    for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < pointsToPlot; j--, k++) {
 
                         let currentDate = new Date(d.date[j]);
                         if (currentDate.getFullYear() + currentDate.getMonth() < month) {
                             actualData.push([ currentDate.getTime(), parseFloat(d[p.key][j]) ]);
                             month = currentDate.getMonth();
+                        }
+                    }
+                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                }
+            });
+        } else if (period === 'weekly' || period === 'biweekly') { // Get one date by week
+
+            let spanDays = 7;
+            if (period === 'biweekly') spanDays = 15;
+
+            CONFIG.PROPS.forEach((p) => {
+
+                let currentDate = new Date(d.date[d.date.length - 1])
+
+                if (d.hasOwnProperty(p.key)) {
+
+                    let actualData = []; 
+
+                    for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < pointsToPlot; j--, k++) {
+
+                        let dateToCompare = new Date(d.date[j]);
+
+                        let diffDays = Math.ceil(Math.abs(currentDate.getTime() - dateToCompare.getTime()) / (1000 * 60 * 60 * 24));
+
+                        if (k == 0 || diffDays >= spanDays) {
+                            actualData.push([ dateToCompare.getTime(), parseFloat(d[p.key][j]) ]);
+                            currentDate = dateToCompare;
                         }
                     }
                     series.push({name: d.name + ' ' + p.label, data: actualData});
@@ -80,6 +118,16 @@ function renderChart(chartId, dataKey, period) {
 }
 
 function loadPage(li, key) {
+
+    // Setting the active styled button page
+    if (li != null) {
+        $('#menu-list li').each(function() {
+            $(this).removeClass('active');
+        });
+        $(li).addClass('active');
+    }
+
+
     let template = $('#chart-template').html();
     
     let chartModels = CONFIG.PAGES[key];
@@ -90,7 +138,7 @@ function loadPage(li, key) {
         let rendered = Mustache.render(template, model);
         $('#content').append(rendered)
         $('#content').append('<hr />')
-        renderChart(model.chartId, model.dataKey, 'weekly');
+        renderChart(null, model.chartId, model.dataKey, 'daily');
     });
 }
 

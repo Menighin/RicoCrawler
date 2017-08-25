@@ -17,7 +17,7 @@
     <div class="container">
 
         <div class="row">
-            <nav class="navbar navbar-default">
+            <nav class="navbar navbar-inverse">
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -27,10 +27,10 @@
                     </div>
 
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
+                        <ul class="nav navbar-nav" id="menu-list">
                             <li class="active" onclick="loadPage(this, 'home');"><a href="#">Home</a></li>
-                            <li><a href="#" onclick="loadPage(this, 'treasury');">Tesouro Direto</a></li>
-                            <li><a href="#" onclick="loadPage(this, 'fixedIncome');">Renda Fixa</a></li>
+                            <li onclick="loadPage(this, 'treasury');"><a href="#">Tesouro Direto</a></li>
+                            <li onclick="loadPage(this, 'fixedIncome');"><a href="#">Renda Fixa</a></li>
                         </ul>
                     </div>
                 </div>
@@ -49,15 +49,17 @@
             <div class="row">
                 <input type="hidden" id="{{ chartId }}-title" value="{{ title }}" />
                 <div class="col-md-10 col-md-offset-1">
-                    <div id="{{ chartId }}"></div>
+                    <div id="{{ chartId }}" class="chart"></div>
                 </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-md-10 col-md-offset-1" align="center">
                     <div class="btn-group chart-filter">
-                        <button class="btn btn-primary active" onclick="renderChart('{{ chartId }}', '{{ dataKey }}', 'weekly')">Semanal</button>
-                        <button class="btn btn-primary" onclick="renderChart('{{ chartId }}', '{{ dataKey }}', 'biweekly')">Quinzenal</button>
-                        <button class="btn btn-primary" onclick="renderChart('{{ chartId }}', '{{ dataKey }}', 'monthly')">Mensal</button>
+                        <button class="btn btn-primary active" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'daily')">Diário</button>
+                        <button class="btn btn-primary" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'weekly')">Semanal</button>
+                        <button class="btn btn-primary" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'biweekly')">Quinzenal</button>
+                        <button class="btn btn-primary" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'monthly')">Mensal</button>
                     </div>
                 </div>
             </div>
