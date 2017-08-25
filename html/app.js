@@ -1,7 +1,14 @@
-function buildChart(title) {
-    return {
+function renderChart(chartId, dataKey, period) {
+    
+    let data = DATA;
+
+    dataKey.split('.').forEach(function(k) {
+        data = data[k];
+    });
+    
+    let chart = {
         title: {
-            text: title
+            text: 'OIOIOI'
         },
         yAxis: {
             title: {
@@ -19,74 +26,69 @@ function buildChart(title) {
             }
         },
         legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
+            layout: 'horizontal',
+            align: 'center',
+            verticalAlign: 'bottom'
         }
-    }
-}
-
-function buildDailyChart(data, title) {
-    let chart = buildChart(title);
+    };
 
     let series = [];
     for (let i = 0; i < data.length; i++) {
         
         let d = data[i];
 
-        if (d.hasOwnProperty('actual')) {
-            let actualData = []; 
-            for (let j = 0; j < d.actual.length; j++) {
-                actualData.push([ new Date(d.dates[j]).getTime(), d.actual[j] ])
-            }
-            series.push({name: d.name + ' (Actual)', data: actualData})
-        }
+        let daysToPlot = null;
+        if (period === 'weekly') daysToPlot = 7;
+        else if (period === 'biweekly') daysToPlot = 15;
 
-        if (d.hasOwnProperty('applied')) {
-            let appliedData = []; 
-            for (let j = 0; j < d.applied.length; j++) {
-                appliedData.push([ new Date(d.dates[j]).getTime(), d.applied[j] ])
-            }
-            series.push({name: d.name + ' (Applied)', data: appliedData})
+        if (period !== 'monthly') {
+            CONFIG.PROPS.forEach((p) => {
+                if (d.hasOwnProperty(p.key)) {
+                    let actualData = []; 
+                    for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < daysToPlot; j--, k++) {
+                        actualData.push([ new Date(d.date[j]).getTime(), parseFloat(d[p.key][j]) ]);
+                    }
+                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                }
+            });
+        } else { // Get one date by month
+            let month = new Date(d.date[d.date.length - 1]).getMonth() + 1;
+
+            CONFIG.PROPS.forEach((p) => {
+                if (d.hasOwnProperty(p.key)) {
+
+                    let actualData = []; 
+
+                    for (let j = d[p.key].length - 1; j >= 0; j--) {
+
+                        let currentDate = new Date(d.date[j]);
+                        if (currentDate.getMonth() < month) {
+                            actualData.push([ currentDate.getTime(), parseFloat(d[p.key][j]) ]);
+                            month = currentDate.getMonth();
+                        }
+                    }
+                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                }
+            });
         }
     }
 
     chart.series = series;
 
-    Highcharts.chart('chart', chart);
+    Highcharts.chart(chartId, chart);
 }
 
-Highcharts.chart('summary-daily', {
-        title: {
-            text: 'Solar Employment Growth by Sector, 2010-2016'
-        },
-    
-        yAxis: {
-            title: {
-                text: 'Number of Employees'
-            }
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
-        },
-    
-        series: [{
-            name: 'Installation',
-            data: [43934, 52503, 57177, 69658, 97031, 119931, 10000, 154175]
-        }, {
-            name: 'Manufacturing',
-            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-        }, {
-            name: 'Sales & Distribution',
-            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-        }, {
-            name: 'Project Development',
-            data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-        }, {
-            name: 'Other',
-            data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-        }]
-    
-    });
+
+$(document).ready(() => {
+    let template = $('#chart-template').html();
+
+    let chartModel = {
+        chartId: 'summary',
+        dataKey: 'home.summary'
+    };
+
+    let rendered = Mustache.render(template, chartModel);
+
+    $('#content').html(rendered)
+
+});

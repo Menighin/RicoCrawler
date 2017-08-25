@@ -152,9 +152,9 @@ if __name__ == '__main__':
         fJson = json.loads(fStr) if len(fStr) > 0 else {'lastRun': ''}
 
     if NOW_STR == fJson['lastRun']:
-        print('Boot já pegou dados hoje. Volte amanhã.')
+        print('Bot já gravou dados hoje. Volte amanhã.')
     else: 
-        with open('html/data3.js', 'w+') as f:
+        with open('html/data.js', 'w+') as f:
             try:    
                 props = read_properties()
                 result = get_actives_data(props)
