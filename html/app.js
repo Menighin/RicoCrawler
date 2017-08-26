@@ -142,6 +142,13 @@ function loadPage(li, key) {
     });
 }
 
+function hideAllSeries(chartId) {
+    $.each($('#' + chartId).highcharts().series, function(i, series) {
+        series.setVisible(false, false);
+    });
+
+}
+
 $(document).ready(() => {
 
     loadPage(null, 'home');

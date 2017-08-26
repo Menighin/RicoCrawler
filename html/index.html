@@ -54,13 +54,16 @@
             </div>
             <br>
             <div class="row">
-                <div class="col-md-10 col-md-offset-1" align="center">
+                <div class="col-md-8 col-md-offset-2" align="center">
                     <div class="btn-group chart-filter">
                         <button class="btn btn-primary active" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'daily')">Diário</button>
                         <button class="btn btn-primary" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'weekly')">Semanal</button>
                         <button class="btn btn-primary" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'biweekly')">Quinzenal</button>
                         <button class="btn btn-primary" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'monthly')">Mensal</button>
                     </div>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-danger" onclick="hideAllSeries('{{ chartId }}')">Hide all</button>
                 </div>
             </div>
         </div>
