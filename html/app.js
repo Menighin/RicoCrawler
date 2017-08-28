@@ -1,3 +1,6 @@
+let METHOD = 'value';
+let CURR_PAGE = 'home';
+
 function getDataSeries(data, period) {
     let series = [];
     for (let i = 0; i < data.length; i++) {
@@ -218,7 +221,11 @@ function renderChart(btn, chartId, dataKey, period) {
         }
     };
 
-    chart.series = getPercentageSeries(data, period);
+    if (METHOD === 'value')
+        chart.series = getDataSeries(data, period);
+    else
+        chart.series = getPercentageSeries(data, period);
+    
 
     Highcharts.chart(chartId, chart);
 }
@@ -233,6 +240,7 @@ function loadPage(li, key) {
         $(li).addClass('active');
     }
 
+    CURR_PAGE = key;
 
     let template = $('#chart-template').html();
     
@@ -252,6 +260,20 @@ function hideAllSeries(chartId) {
     $.each($('#' + chartId).highcharts().series, function(i, series) {
         series.setVisible(false, false);
     });
+}
+
+function changeMethod(btn, m, chartId) {
+    // Disable buttons to enable the clicked one
+    if (btn != null) {
+        $('#' + chartId + '-container .chart-filter .btn').each(function() {
+            $(this).removeClass('active');
+        });
+
+        $(btn).addClass('active');
+    }
+
+    METHOD = m;
+    loadPage(null, CURR_PAGE);
 
 }
 

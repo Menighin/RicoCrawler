@@ -54,7 +54,13 @@
             </div>
             <br>
             <div class="row">
-                <div class="col-md-8 col-md-offset-2" align="center">
+                <div class="col-md-2 col-md-offset-1" align="right">
+                    <div class="btn-group">
+                        <button class="btn btn-success active" onclick="changeMethod(this, 'value', '{{ chartId }}')">Value</button>
+                        <button class="btn btn-success" onclick="changeMethod(this, 'percentage', '{{ chartId }}')">Percentage</button>
+                    </div>
+                </div>
+                <div class="col-md-7" align="center">
                     <div class="btn-group chart-filter">
                         <button class="btn btn-primary active" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'daily')">Diário</button>
                         <button class="btn btn-primary" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'weekly')">Semanal</button>
