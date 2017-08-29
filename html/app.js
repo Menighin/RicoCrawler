@@ -262,10 +262,10 @@ function hideAllSeries(chartId) {
     });
 }
 
-function changeMethod(btn, m, chartId) {
+function changeMethod(btn, m) {
     // Disable buttons to enable the clicked one
     if (btn != null) {
-        $('#' + chartId + '-container .chart-filter .btn').each(function() {
+        $('#configBtns .btn').each(function() {
             $(this).removeClass('active');
         });
 

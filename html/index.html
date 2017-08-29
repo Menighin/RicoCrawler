@@ -26,7 +26,7 @@
                         <a class="navbar-brand" href="#">Rico.com.vc</a>
                     </div>
 
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <div class="collapse navbar-collapse">
                         <ul class="nav navbar-nav" id="menu-list">
                             <li class="active" onclick="loadPage(this, 'home');"><a href="#">Home</a></li>
                             <li onclick="loadPage(this, 'treasury');"><a href="#">Tesouro Direto</a></li>
@@ -37,6 +37,16 @@
             </nav>
         </div>
 
+        <div class="row">
+            <div class="col-md-12" align="center">
+                <div class="btn-group" id="configBtns">
+                    <button class="btn btn-success active" onclick="changeMethod(this, 'value')">Value</button>
+                    <button class="btn btn-success" onclick="changeMethod(this, 'percentage')">Percentage</button>
+                </div>
+            </div>
+        </div>
+        <br />
+        
         <section id="content">
             <!-- Placeholder for components -->
         </section>
@@ -54,13 +64,7 @@
             </div>
             <br>
             <div class="row">
-                <div class="col-md-2 col-md-offset-1" align="right">
-                    <div class="btn-group">
-                        <button class="btn btn-success active" onclick="changeMethod(this, 'value', '{{ chartId }}')">Value</button>
-                        <button class="btn btn-success" onclick="changeMethod(this, 'percentage', '{{ chartId }}')">Percentage</button>
-                    </div>
-                </div>
-                <div class="col-md-7" align="center">
+                <div class="col-md-7 col-md-offset-1" align="center">
                     <div class="btn-group chart-filter">
                         <button class="btn btn-primary active" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'daily')">Diário</button>
                         <button class="btn btn-primary" onclick="renderChart(this, '{{ chartId }}', '{{ dataKey }}', 'weekly')">Semanal</button>
