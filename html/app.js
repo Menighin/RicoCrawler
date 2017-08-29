@@ -18,7 +18,7 @@ function getDataSeries(data, period) {
                     for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < pointsToPlot; j--, k++) {
                         actualData.push([ new Date(d.date[j]).getTime(), parseFloat(d[p.key][j]) ]);
                     }
-                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
             });
         } else if (period == 'monthly') { // Get one date by month
@@ -40,7 +40,7 @@ function getDataSeries(data, period) {
                             month = currentDate.getMonth();
                         }
                     }
-                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
             });
         } else if (period === 'weekly' || period === 'biweekly') { // Get one date by week
@@ -67,12 +67,42 @@ function getDataSeries(data, period) {
                             currentDate = dateToCompare;
                         }
                     }
-                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
             });
         }
     }
 
+    // Calculate totals
+    let totalApplied = { name: 'Total (Applied)', data: [], modelData: 'applied' };
+    let totalActual = { name: 'Total (Actual)', data: [], modelData: 'actual' };
+
+    for (let i = 0; i < series.length; i++) {
+        let s = series[i];
+
+        for (let j = 0; j < s.data.length; j++) {
+
+            let d = s.data[j];
+
+            if (s.modelData === 'applied') {
+                if (typeof(totalApplied.data[j]) === 'undefined') {
+                    totalApplied.data.push(d);
+                } else {
+                    totalApplied.data[j][1] += d[1];
+                }
+            } else if (s.modelData === 'actual') {
+                if (typeof(totalActual.data[j]) === 'undefined') {
+                    totalActual.data.push(d);
+                } else {
+                    totalActual.data[j][1] += d[1];
+                }
+            }
+
+        }
+    }
+
+    series.push(totalApplied);
+    series.push(totalActual);
     return series;
 }
 
@@ -99,7 +129,7 @@ function getPercentageSeries(data, period) {
 
                         actualData.push([ new Date(d.date[j]).getTime(), percentValue]);
                     }
-                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
             });
         } else if (period == 'monthly') { // Get one date by month
@@ -132,7 +162,7 @@ function getPercentageSeries(data, period) {
                         actualData.push(percentValue);
                     }
 
-                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
             });
         } else if (period === 'weekly' || period === 'biweekly') { // Get one date by week
@@ -169,7 +199,7 @@ function getPercentageSeries(data, period) {
                         actualData.push(percentValue);
                     }
 
-                    series.push({name: d.name + ' ' + p.label, data: actualData});
+                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
             });
         }
@@ -201,7 +231,7 @@ function renderChart(btn, chartId, dataKey, period) {
         },
         yAxis: {
             title: {
-                text: 'R$'
+                text: METHOD == 'value' ? 'R$' : '%'
             }
         },
         xAxis: {
