@@ -90,13 +90,13 @@ function getDataSeries(data, period) {
 
             if (s.modelData === 'applied') {
                 if (typeof(totalApplied.data[j]) === 'undefined') {
-                    totalApplied.data.push(d);
+                    totalApplied.data.push([d[0], d[1]]);
                 } else {
                     totalApplied.data[j][1] += d[1];
                 }
             } else if (s.modelData === 'actual') {
                 if (typeof(totalActual.data[j]) === 'undefined') {
-                    totalActual.data.push(d);
+                    totalActual.data.push(d[d[0], d[1]]);
                 } else {
                     totalActual.data[j][1] += d[1];
                 }

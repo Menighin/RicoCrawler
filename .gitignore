@@ -3,3 +3,5 @@ config.json
 .vscode/
 __pycache__/
 html/data.js
+build/
+*.bat

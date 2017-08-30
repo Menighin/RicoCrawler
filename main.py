@@ -27,10 +27,11 @@ def get_actives_data(props: dict):
 
     username = props['username']
     password = props['password']
+    chromeProfilePath = props['chromeProfilePath']
     webdriver_path = props['chromeWebdriver'] if 'chromeWebdriver' in props else None
 
     options = webdriver.ChromeOptions() 
-    options.add_argument("user-data-dir=C:\\Users\\Menighin\\AppData\\Local\\Google\\Chrome\\User Data") #Path to your chrome profile
+    options.add_argument("user-data-dir=" + chromeProfilePath) #Path to your chrome profile
 
     driver = webdriver.Chrome(webdriver_path, chrome_options = options) if webdriver_path is not None else webdriver.Chrome(chrome_options = options)
 
