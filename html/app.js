@@ -1,6 +1,15 @@
 let METHOD = 'value';
 let CURR_PAGE = 'home';
 
+Date.prototype.ricoFormat = function() {
+    var date = this,
+    day = date.getDate(),
+    month = date.getMonth() + 1,
+    year = date.getFullYear();
+
+    return day + '/' + month + '/' + year;
+};
+
 function getDataSeries(data, period) {
     let series = [];
     for (let i = 0; i < data.length; i++) {
@@ -11,27 +20,24 @@ function getDataSeries(data, period) {
         if (period === 'weekly' || period === 'biweekly' || period === 'monthly') pointsToPlot = 12;
         else if (period === 'daily') pointsToPlot = 14;
 
-        if (period === 'daily') {
-            CONFIG.PROPS.forEach((p) => {
+        CONFIG.PROPS.forEach((p) => {
+
+            let actualData = []; 
+
+            if (period === 'daily') {
+
                 if (d.hasOwnProperty(p.key)) {
-                    let actualData = []; 
                     for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < pointsToPlot; j--, k++) {
                         actualData.push([ new Date(d.date[j]).getTime(), parseFloat(d[p.key][j]) ]);
                     }
-                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
-            });
-        } else if (period == 'monthly') { // Get one date by month
-           
-            CONFIG.PROPS.forEach((p) => {
+
+            } else if (period == 'monthly') { // Get one date by month
 
                 let date = new Date(d.date[d.date.length - 1])
                 let month = date.getFullYear() + date.getMonth() + 1;
 
                 if (d.hasOwnProperty(p.key)) {
-
-                    let actualData = []; 
-
                     for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < pointsToPlot; j--, k++) {
 
                         let currentDate = new Date(d.date[j]);
@@ -40,22 +46,16 @@ function getDataSeries(data, period) {
                             month = currentDate.getMonth();
                         }
                     }
-                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
-            });
-        } else if (period === 'weekly' || period === 'biweekly') { // Get one date by week
 
-            let spanDays = 7;
-            if (period === 'biweekly') spanDays = 15;
+            } else if (period === 'weekly' || period === 'biweekly') { // Get one date by week
 
-            CONFIG.PROPS.forEach((p) => {
+                let spanDays = 7;
+                if (period === 'biweekly') spanDays = 15;
 
                 let currentDate = new Date(d.date[d.date.length - 1])
 
                 if (d.hasOwnProperty(p.key)) {
-
-                    let actualData = []; 
-
                     for (let j = d[p.key].length - 1, k = 0; j >= 0 && k < pointsToPlot; j--, k++) {
 
                         let dateToCompare = new Date(d.date[j]);
@@ -67,10 +67,14 @@ function getDataSeries(data, period) {
                             currentDate = dateToCompare;
                         }
                     }
-                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
-            });
-        }
+
+            }
+
+            actualData = actualData.sort((x, y) => x[0] - y[0]);
+            series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
+            
+        });
     }
 
     // Calculate totals
@@ -116,10 +120,13 @@ function getPercentageSeries(data, period) {
         if (period === 'weekly' || period === 'biweekly' || period === 'monthly') pointsToPlot = 12;
         else if (period === 'daily') pointsToPlot = 14;
 
-        if (period === 'daily') {
-            CONFIG.PROPS.forEach((p) => {
+
+        CONFIG.PROPS.forEach((p) => {
+
+            let actualData = []; 
+
+            if (period === 'daily') {
                 if (d.hasOwnProperty(p.key)) {
-                    let actualData = []; 
                     for (let j = d[p.key].length - 1, k = 0; j > 0 && k < pointsToPlot; j--, k++) {
 
                         let todayValue = parseFloat(d[p.key][j]);
@@ -129,13 +136,8 @@ function getPercentageSeries(data, period) {
 
                         actualData.push([ new Date(d.date[j]).getTime(), percentValue]);
                     }
-                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
-            });
-        } else if (period == 'monthly') { // Get one date by month
-           
-            CONFIG.PROPS.forEach((p) => {
-
+            } else if (period == 'monthly') { // Get one date by month
                 let date = new Date(d.date[d.date.length - 1])
                 let month = date.getFullYear() + date.getMonth() + 1;
 
@@ -153,7 +155,6 @@ function getPercentageSeries(data, period) {
                         }
                     }
 
-                    let actualData = [];
                     for (let j = monthlyData.length; j > 0; j--) {
                         let thisMonth = monthlyData[j];
                         let lastMonth = monthlyData[j-1];
@@ -162,15 +163,11 @@ function getPercentageSeries(data, period) {
                         actualData.push(percentValue);
                     }
 
-                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
-            });
-        } else if (period === 'weekly' || period === 'biweekly') { // Get one date by week
+            } else if (period === 'weekly' || period === 'biweekly') { // Get one date by week
 
-            let spanDays = 7;
-            if (period === 'biweekly') spanDays = 15;
-
-            CONFIG.PROPS.forEach((p) => {
+                let spanDays = 7;
+                if (period === 'biweekly') spanDays = 15;
 
                 let currentDate = new Date(d.date[d.date.length - 1])
 
@@ -190,7 +187,6 @@ function getPercentageSeries(data, period) {
                         }
                     }
 
-                    let actualData = [];
                     for (let j = weeklyData.length; j > 0; j--) {
                         let thisWeek = weeklyData[j];
                         let lastWeek = weeklyData[j-1];
@@ -199,10 +195,19 @@ function getPercentageSeries(data, period) {
                         actualData.push(percentValue);
                     }
 
-                    series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
                 }
+            }
+
+            actualData = actualData.sort((x, y) => x[0] - y[0]);
+
+            actualData.forEach((v) => {
+                v[0] = new Date(v[0]).ricoFormat();
             });
-        }
+
+            series.push({name: d.name + ' ' + p.label, data: actualData, modelData: p.key});
+
+        });
+    
     }
 
     return series;
@@ -226,6 +231,9 @@ function renderChart(btn, chartId, dataKey, period) {
     });
     
     let chart = {
+        chart: {
+            type: METHOD == 'value' ? 'line' : 'column'
+        },
         title: {
             text: $('#' + chartId + '-title').val()
         },
@@ -253,8 +261,10 @@ function renderChart(btn, chartId, dataKey, period) {
 
     if (METHOD === 'value')
         chart.series = getDataSeries(data, period);
-    else
+    else {
+        chart.xAxis = { type: "category" };
         chart.series = getPercentageSeries(data, period);
+    }
     
 
     Highcharts.chart(chartId, chart);
